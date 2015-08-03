@@ -18,9 +18,7 @@ exports.index = function(req, res) {
 	var search="";
 
 	if (req.query.search) {
-		search = '%' + req.query.search.replace(/\s+/g,"%") + '%';	
-		
-		console.log('PARAMETRO SEARCH = ' + search);
+		search = '%' + req.query.search.replace(/\s+/g,"%") + '%';
 	
 		models.Quiz.findAll(
 			{ where: ["upper(pregunta) like ?", search.toUpperCase()] }
@@ -36,8 +34,6 @@ exports.index = function(req, res) {
 
 
 };
-
-
 
 //GET /quizes/question
 exports.show = function(req, res) {
@@ -55,3 +51,27 @@ exports.answer = function(req, res) {
 	res.render('quizes/answer', { quiz: req.quiz, respuesta: resultado});
 	
 };
+
+
+//GET /quizes/new
+exports.new = function(req, res){
+	var quiz = models.Quiz.build( //crea objeto quiz
+		{ pregunta: "Pregunta", respuesta: "Respuesta" }
+	);
+	
+	res.render('quizes/new', { quiz: quiz });
+};
+
+
+//GET /quizes/create
+exports.create = function(req, res){
+	var quiz = models.Quiz.build( req.body.quiz );
+	
+	//guarda en BD los campos pregunta y respuesta de quiz
+	quiz.save({ fields: ["pregunta", "respuesta"]})
+	    .then(function() {
+			res.redirect('/quizes');
+		}); //redireccion HTTP (url relativo) lista de preguntas
+};
+
+
