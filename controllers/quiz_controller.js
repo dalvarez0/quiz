@@ -105,3 +105,13 @@ exports.update = function(req, res){
 			} //redirección HTTP a lista de preguntas	
 		});
 };
+
+
+//DELETE /quizes/:id
+exports.destroy = function(req, res){
+	req.quiz.destroy().then( function() {
+		res.redirect('/quizes');
+	}).catch(function(error) {next(error);});
+};
+
+
