@@ -43,6 +43,22 @@ app.use(function(req, res, next) {
 	next();
 });
 
+//Auto logout
+app.use(function(req, res, next) {
+	var accesoActual = Date.now();
+
+	if ((req.session.user) && (req.session.accesoAnterior) && (accesoActual - req.session.accesoAnterior > 120000)) {	
+		delete req.session.user;
+		req.session.errors = [ { "message": 'Sesión cerrada por inactividad' } ];
+		res.redirect('/login');
+		return;
+	} else {
+		req.session.accesoAnterior = accesoActual;
+	}
+  	next();
+});
+
+
 app.use('/', routes);
 
 // catch 404 and forward to error handler
